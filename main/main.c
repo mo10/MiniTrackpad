@@ -1,7 +1,5 @@
 #include <stdio.h>
 
-#include "hardware.h"
-
 #include "esp_log.h"
 #include "esp_system.h"
 #include "esp_freertos_hooks.h"
@@ -12,6 +10,11 @@
 
 #include "lvgl.h"
 #include "lvgl_helpers.h"
+
+#include "gt911_hal.h"
+
+#include "hardware.h"
+#include "config.h"
 
 #define LV_TICK_PERIOD_MS 1
 
@@ -25,6 +28,17 @@ void app_main(void)
 {
     ESP_LOGI(TAG,"Hello world");
     hardware_init();
+    gt911_init_config_t config = {
+        .i2c_port = 0,
+        .i2c_sda_pin = HW_I2C_SDA,
+        .i2c_scl_pin = HW_I2C_SCL,
+        .i2c_speed = 400*1000,
+        .rst_pin = HW_TP_RST,
+        .int_pin = HW_TP_INT
+    };
+
+    gt911_init(&config);
+
     xTaskCreatePinnedToCore(lvgl_task, "gui", 4096*2, NULL, 0, NULL, 1);
 }
 
@@ -52,18 +66,18 @@ static void lvgl_task(void *pvParameter){
     disp_drv.ver_res = 320;
     lv_disp_drv_register(&disp_drv);
 
-    // lv_indev_drv_t indev_drv;
-    // lv_indev_drv_init(&indev_drv);
-    // indev_drv.type = LV_INDEV_TYPE_POINTER;
-    // indev_drv.read_cb = gt911_read;
-    // // Touch 
-    // lv_indev_t * mouse_indev =lv_indev_drv_register(&indev_drv);
-    // if (!mouse_indev) {
-    //     ESP_LOGI(TAG,"\n lv_indev_drv_register failed");
-    // }
-    // lv_obj_t * cursor_obj =  lv_img_create(lv_scr_act()); /*Create an image object for the cursor */
-    // lv_img_set_src(cursor_obj, LV_SYMBOL_PLUS);             /*Set the image source*/
-    // lv_indev_set_cursor(mouse_indev, cursor_obj);               /*Connect the image  object to the driver*/
+    lv_indev_drv_t indev_drv;
+    lv_indev_drv_init(&indev_drv);
+    indev_drv.type = LV_INDEV_TYPE_POINTER;
+    indev_drv.read_cb = gt911_lv_indev_cb;
+    // Touch 
+    lv_indev_t * mouse_indev =lv_indev_drv_register(&indev_drv);
+    if (!mouse_indev) {
+        ESP_LOGI(TAG,"\n lv_indev_drv_register failed");
+    }
+    lv_obj_t * cursor_obj =  lv_img_create(lv_scr_act()); /*Create an image object for the cursor */
+    lv_img_set_src(cursor_obj, LV_SYMBOL_PLUS);             /*Set the image source*/
+    lv_indev_set_cursor(mouse_indev, cursor_obj);               /*Connect the image  object to the driver*/
 
     /* Create and start a periodic timer interrupt to call lv_tick_inc */
     const esp_timer_create_args_t periodic_timer_args = {

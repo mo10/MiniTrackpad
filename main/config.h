@@ -34,6 +34,12 @@
 #define HW_LCD_BKL      42
 
 /*
+*   I2C GPIO Config
+*/
+#define HW_I2C_SDA  14
+#define HW_I2C_SCL  21
+
+/*
 *   GT911 GPIO Config
 */
 #define HW_TP_RST   48
@@ -45,11 +51,6 @@
 #define HW_HT_EN    38
 #define HW_HT_TRIG  39
 
-/*
-*   I2C GPIO Config
-*/
-#define HW_I2C_SDA  14
-#define HW_I2C_SCL  21
 
 
 #endif

@@ -15,7 +15,26 @@
         "esp_log.h": "c",
         "gpio.h": "c",
         "sdkconfig.h": "c",
-        "*.inc": "c"
+        "*.inc": "c",
+        "regex": "cpp",
+        "random": "cpp",
+        "*.ipp": "cpp",
+        "*.tcc": "cpp",
+        "optional": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "ratio": "cpp",
+        "system_error": "cpp",
+        "array": "cpp",
+        "functional": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "string": "c",
+        "string_view": "c",
+        "complex": "c",
+        "lvgl.h": "c",
+        "chrono": "cpp"
     },
     "idf.flashType": "UART"
 }
